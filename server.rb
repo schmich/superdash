@@ -52,13 +52,19 @@ use Rack::Parser, content_types: {
 helpers do
   def int_param(name)
     param = required_param(name)
-    raise RequestError, "Invalid parameter: #{name}." if !/\d+/.match(param)
+    raise RequestError, "Invalid parameter: #{name}." if !/\d+/.match(param.to_s)
     param.to_i
+  end
+
+  def str_param(name)
+    param = required_param(name)
+    raise RequestError, "Invalid parameter: #{name}." if /^\s*$/.match(param.to_s)
+    param.to_s
   end
 
   def required_param(name)
     param = params[name]
-    raise RequestError, "Missing parameter: #{name}." if !param || param.empty?
+    raise RequestError, "Missing parameter: #{name}." if !param
     param
   end
 
@@ -111,8 +117,8 @@ end
 
 post '/hosts' do
   handle_errors do
-    name = required_param(:name)
-    host = required_param(:host)
+    name = str_param(:name)
+    host = str_param(:host)
     port = int_param(:port)
 
     id = nil
@@ -133,8 +139,8 @@ patch '/hosts/:id' do
   handle_errors do
     id = int_param(:id)
 
-    name = required_param(:name)
-    host = required_param(:host)
+    name = str_param(:name)
+    host = str_param(:host)
     port = int_param(:port)
 
     $db.edit 'hosts' do |hosts|
@@ -179,8 +185,8 @@ end
 get '/hosts/:id/process/log' do
   handle_errors do
     host = find_host(:id)
-    group = required_param(:group)
-    name = required_param(:name)
+    group = str_param(:group)
+    name = str_param(:name)
 
     # TODO: More param validation.
     client = connect(host)
@@ -195,9 +201,9 @@ end
 post '/hosts/:id/process/command' do
   handle_errors do
     host = find_host(:id)
-    group = required_param(:group)
-    name = required_param(:name)
-    command = required_param(:command)
+    group = str_param(:group)
+    name = str_param(:name)
+    command = str_param(:command)
 
     # TODO: More param validation.
     client = connect(host)

@@ -1,5 +1,15 @@
 var app = angular.module('superdash', ['angular.filter']);
 
+// TODO
+// Warning if log is empty (flush output)
+// Fullscreen log viewing
+// stdout/stderr tabs
+// Watch/unwatch issues
+// Better inline form to add host (after all existing hosts)
+// Header?
+// Implement stop all/start all
+// Pri 2: Group pivot
+
 var states = {
   stopped: 0,
   starting: 10,
@@ -65,17 +75,19 @@ app.controller('CreateHostCtrl', function($scope, $http) {
 app.controller('HostCtrl', function($scope, $http) {
   $scope.delete = function(host) {
     var remove = confirm('Remove this host?');
-    if (remove) {
-      $http.delete('/hosts/' + host.id)
-        .success(function(res) {
-          // TODO: Refresh from server?
-          // TODO: Confirm?
-          delete $scope.hosts[host.id];
-        })
-        .error(function(res) {
-          // TODO
-        });
+    if (!remove) {
+      return;
     }
+
+    $http.delete('/hosts/' + host.id)
+      .success(function(res) {
+        // TODO: Refresh from server?
+        // TODO: Confirm?
+        delete $scope.hosts[host.id];
+      })
+      .error(function(res) {
+        // TODO
+      });
   };
 });
 
