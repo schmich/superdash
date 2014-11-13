@@ -30,7 +30,7 @@ app.controller('DashboardCtrl', function($scope, $http) {
   $scope.update();
 });
 
-app.controller('HostCtrl', function($scope, $http) {
+app.controller('CreateHostCtrl', function($scope, $http) {
   $scope.name = null;
   $scope.host = null;
   $scope.port = null;
@@ -39,6 +39,20 @@ app.controller('HostCtrl', function($scope, $http) {
     $http.post('/hosts', { name: $scope.name, host: $scope.host, port: $scope.port })
       .success(function(res) {
         $scope.update();
+      })
+      .error(function(res) {
+        // TODO
+      });
+  };
+});
+
+app.controller('HostCtrl', function($scope, $http) {
+  $scope.delete = function(host) {
+    $http.delete('/hosts/' + host.id)
+      .success(function(res) {
+        // TODO: Refresh from server?
+        // TODO: Confirm?
+        delete $scope.hosts[host.id];
       })
       .error(function(res) {
         // TODO

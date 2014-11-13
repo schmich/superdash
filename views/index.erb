@@ -5,15 +5,16 @@
   <script src="/public/app.js"></script>
 </head>
 <body ng-app="superdash" ng-controller="DashboardCtrl">
-  <form ng-controller="HostCtrl" ng-submit="submit()">
+  <form ng-controller="CreateHostCtrl" ng-submit="submit()">
     <input type="text" ng-model="name" placeholder="Name">
     <input type="text" ng-model="host" placeholder="IP or hostname">
     <input type="text" ng-model="port" placeholder="Port" value="9001">
     <input type="submit" value="Add Host">
   </form>
+  <a href="">Flat List</a> | <a href="">By Server</a> | <a href="">By Group</a>
   <ul>
-    <li ng-repeat="(_, host) in hosts">
-      {{host.name}}
+    <li ng-repeat="(_, host) in hosts" ng-controller="HostCtrl">
+      {{host.name}} <a href="" ng-click="delete(host)">delete</a>
       <ul>
         <li ng-repeat="(group, processes) in host.processes | groupBy: 'group'">
           {{group}}
