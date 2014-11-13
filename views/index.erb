@@ -1,0 +1,16 @@
+<html>
+<head>
+  <script src="/public/angular.min.js"></script>
+  <script src="/public/app.js"></script>
+</head>
+<body ng-app="superdash" ng-controller="DashboardCtrl">
+  <ul>
+    <li ng-repeat="host in hosts">
+      {{host.name}}
+      <ul>
+        <li ng-repeat="process in host.processes">{{process.name}}</li>
+      </ul>
+    </li>
+  </ul>
+</body>
+</html>

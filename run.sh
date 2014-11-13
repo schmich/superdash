@@ -1,0 +1,1 @@
+rackup db config.ru
