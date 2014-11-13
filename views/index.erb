@@ -51,7 +51,7 @@
               </section>
               <section ng-if="process.watchLog" class="log-container">
                 <div class="row">
-                  <div autoscroll="process.log" class="col-md-12 log">{{process.log}}</div>
+                  <div autoscroll="process.log" class="col-md-12 log" ng-bind-html="process.log"></div>
                 </div>
               </section>
             </div>

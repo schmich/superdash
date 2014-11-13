@@ -57,3 +57,117 @@ body {
   color: #fff;
   background: #e77;
 }
+.ansi-bold {
+  font-weight: bold;
+}
+.ansi-underline {
+  text-decoration: underline;
+}
+.ansi-blink {
+  text-decoration: blink;
+}
+.ansi-hidden {
+  display: none;
+}
+.ansi-fg-default {
+  color: #555;
+}
+.ansi-fg-black {
+  color: #000;
+}
+.ansi-fg-red {
+  color: #900;
+}
+.ansi-fg-green {
+  color: #090;
+}
+.ansi-fg-yellow {
+  color: #990;
+}
+.ansi-fg-blue {
+  color: #009;
+}
+.ansi-fg-magenta {
+  color: #909;
+}
+.ansi-fg-cyan {
+  color: #099;
+}
+.ansi-fg-gray {
+  color: #111;
+}
+.ansi-fg-lred {
+  color: #f00;
+}
+.ansi-fg-lgreen {
+  color: #0f0;
+}
+.ansi-fg-lyellow {
+  color: #ff0;
+}
+.ansi-fg-lblue {
+  color: #00f;
+}
+.ansi-fg-lmagenta {
+  color: #f0f;
+}
+.ansi-fg-lcyan {
+  color: #0ff;
+}
+.ansi-fg-lgray {
+  color: #999;
+}
+.ansi-fg-white {
+  color: #fff;
+}
+.ansi-bg-default {
+  background-color: inherit;
+}
+.ansi-bg-black {
+  background-color: #000;
+}
+.ansi-bg-red {
+  background-color: #900;
+}
+.ansi-bg-green {
+  background-color: #090;
+}
+.ansi-bg-yellow {
+  background-color: #990;
+}
+.ansi-bg-blue {
+  background-color: #009;
+}
+.ansi-bg-magenta {
+  background-color: #909;
+}
+.ansi-bg-cyan {
+  background-color: #099;
+}
+.ansi-bg-gray {
+  background-color: #111;
+}
+.ansi-bg-lred {
+  background-color: #f00;
+}
+.ansi-bg-lgreen {
+  background-color: #0f0;
+}
+.ansi-bg-lyellow {
+  background-color: #ff0;
+}
+.ansi-bg-lblue {
+  background-color: #00f;
+}
+.ansi-bg-lmagenta {
+  background-color: #f0f;
+}
+.ansi-bg-lcyan {
+  background-color: #0ff;
+}
+.ansi-bg-lgray {
+  background-color: #999;
+}
+.ansi-bg-white {
+  background-color: #fff;
+}
