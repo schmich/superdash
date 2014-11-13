@@ -31,17 +31,32 @@
             <button ng-disabled="!host.connected" class="btn btn-default">Stop All</button>
             <button ng-disabled="!host.connected" class="btn btn-default">Restart All</button>
           </div>
-          <div class="processes" ng-repeat="(group, processes) in host.processes | groupBy: 'group'">
-            <section class="process {{process.state | processState}}" ng-repeat="process in processes" ng-controller="ProcessCtrl">
-              <div class="row">
-                <div class="col-md-4"><span class="group">{{process.group}}</span> {{process.name}}</div>
-                <div class="col-md-4">{{process.state | processState}}</div>
-                <div class="col-md-4">
-                  <button class="btn btn-default pull-right" ng-click="control(process, 'start')" ng-if="process.state == states.stopped">Start</button>
-                  <button class="btn btn-default pull-right" ng-click="control(process, 'stop')" ng-if="process.state == states.running">Stop</button>
+          <div ng-if="host.connected" class="processes" ng-repeat="(group, processes) in host.processes | groupBy: 'group'">
+            <div class="process" ng-repeat="process in processes" ng-controller="ProcessCtrl">
+              <section class="{{process.state | processState}}">
+                <div class="row">
+                  <div class="col-md-7"><span class="group">{{process.group}}</span> {{process.name}}</div>
+                  <div class="col-md-2">{{process.state | processState}}</div>
+                  <div class="col-md-3">
+                    <div class="pull-right">
+                      <button class="btn btn-default" ng-click="control(process, 'start')" ng-if="process.state == states.stopped">Start</button>
+                      <button class="btn btn-default" ng-click="control(process, 'stop')" ng-if="process.state == states.running">Stop</button>
+                      <button class="btn btn-default" ng-click="watchLog(process)">Show Log</button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </section>
+              </section>
+              <section ng-if="process.watchLog" class="log-container">
+                <div class="row">
+                  <div autoscroll="process.log" class="col-md-12 log">{{process.log}}</div>
+                </div>
+              </section>
+            </div>
+          </div>
+          <div ng-if="host.error">
+            <div class="alert alert-danger">
+              Could not connect to host.
+            </div>
           </div>
         </div>
       </div>

@@ -24,7 +24,7 @@ end
 
 # TODO: Cache connections.
 def connect(host)
-  RubySupervisor::Client.new(host[:host], host[:port], timeout: 3)
+  RubySupervisor::Client.new(host[:host], host[:port], timeout: 2)
 end
 
 def handle_errors
@@ -188,7 +188,7 @@ get '/hosts/:id/process/log' do
 
     raise RequestError, 'Process does not exist.' if !process
 
-    json log: process.logs.read(0, 100)
+    json log: process.logs.read(-1000, 0)
   end
 end
 

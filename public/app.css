@@ -21,13 +21,12 @@ body {
 }
 .host .control {
   border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
   padding: 10px 0 12px 0;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
-.host .process {
+.host .process section {
   margin-bottom: 3px;
-  padding: 3px;
+  padding: 3px 5px 5px 0;
   line-height: 36px;
 }
 .host .process .group {
@@ -36,9 +35,23 @@ body {
   font-size: smaller;
   margin: 0 10px;
 }
-.host .process.stopped {
+.host .process .stopped {
   background: #f0f0f0;
 }
-.host .process.running {
+.host .process .running {
   background: rgb(223, 240, 216);
+}
+.host .process .log-container {
+  background: #fdfdfd;
+}
+.host .process .log {
+  height: 200px;
+  overflow: auto;
+  white-space: pre;
+  font-family: Consolas, Monaco, monospace;
+  line-height: 150%;
+}
+.alert-danger {
+  color: #fff;
+  background: #e77;
 }

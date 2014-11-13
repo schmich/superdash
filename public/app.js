@@ -20,7 +20,8 @@ app.controller('DashboardCtrl', function($scope, $http) {
         for (var i = 0; i < res.length; ++i) {
           var host = res[i];
           $scope.hosts[host.id] = host;
-          $scope.hosts[host.id].connected = false;
+          host.connected = false;
+          host.error = null;
         }
 
         for (var id in $scope.hosts) {
@@ -28,6 +29,7 @@ app.controller('DashboardCtrl', function($scope, $http) {
             .success(function(res) {
               var host = $scope.hosts[res.id];
               host.connected = (res.error == null);
+              host.error = res.error;
               host.processes = res.processes;
               host.version = res.version;
             })
@@ -93,7 +95,7 @@ app.controller('ProcessCtrl', function($scope, $http) {
       });
   };
 
-  $scope.log = function(process) {
+  function updateLog(process) {
     var params = {
       group: process.group,
       name: process.name
@@ -101,8 +103,20 @@ app.controller('ProcessCtrl', function($scope, $http) {
 
     $http.get('/hosts/' + $scope.host.id + '/process/log', { params: params })
       .success(function(res) {
-        alert(res.log);
+        process.log = res.log.replace(/(^\s*)|(\s*$)/g, '');
       });
+
+    if (process.watchLog) { 
+      setTimeout(function() { updateLog(process); }, 1000);
+    }
+  }
+
+  $scope.watchLog = function(process) {
+    process.watchLog = !process.watchLog;
+
+    if (process.watchLog) {
+      updateLog(process);
+    }
   };
 });
 
@@ -120,5 +134,15 @@ app.filter('processState', function() {
 
   return function(input) {
     return names[input] || 'Unknown';
+  };
+});
+
+app.directive('autoscroll', function() {
+  return {
+    link: function(scope, elem, attrs) {
+      scope.$watch(attrs.autoscroll, function() {
+        elem[0].scrollTop = elem[0].scrollHeight;
+      });
+    }
   };
 });
