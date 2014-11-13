@@ -1,14 +1,30 @@
 <html>
 <head>
   <script src="/public/angular.min.js"></script>
+  <script src="/public/angular-filter.min.js"></script>
   <script src="/public/app.js"></script>
 </head>
 <body ng-app="superdash" ng-controller="DashboardCtrl">
+  <form ng-controller="HostCtrl" ng-submit="submit()">
+    <input type="text" ng-model="name" placeholder="Name">
+    <input type="text" ng-model="host" placeholder="IP or hostname">
+    <input type="text" ng-model="port" placeholder="Port" value="9001">
+    <input type="submit" value="Add Host">
+  </form>
   <ul>
-    <li ng-repeat="host in hosts">
+    <li ng-repeat="(_, host) in hosts">
       {{host.name}}
       <ul>
-        <li ng-repeat="process in host.processes">{{process.name}}</li>
+        <li ng-repeat="(group, processes) in host.processes | groupBy: 'group'">
+          {{group}}
+          <ul>
+            <li ng-repeat="process in processes" ng-controller="ProcessCtrl">
+              {{process.name}}
+              <a href="" ng-if="process.state == 0" ng-click="control(process, 'start')">start</a>
+              <a href="" ng-if="process.state == 20" ng-click="control(process, 'stop')">stop</a>
+            </li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>

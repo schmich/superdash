@@ -1,9 +1,12 @@
 require 'sinatra'
 require 'sinatra/json'
+require 'rack/parser'
 require 'ruby-supervisor'
 require 'fsdb'
+require 'json'
+require 'rack'
 
-db_path = ARGV[0]
+db_path = ARGV[0] || 'db'
 if !db_path || db_path.empty?
   raise 'Specify a database path.'
 end
@@ -27,8 +30,39 @@ def handle_errors
     json error: e.to_s
   rescue => e
     puts e
+    puts e.backtrace
     status 500
     json error: 'Internal error.'
+  end
+end
+
+use Rack::Static, 
+  :urls => ['/public'],
+  :root => '.'
+
+use Rack::Parser, content_types: {
+  'application/json' => Proc.new { |body| JSON.decode body }
+}
+
+helpers do
+  def int_param(name)
+    param = required_param(name)
+    raise RequestError, "Invalid parameter: #{name}." if !/\d+/.match(param)
+    param.to_i
+  end
+
+  def required_param(name)
+    param = params[name]
+    raise RequestError, "Missing parameter: #{name}." if !param || param.empty?
+    param
+  end
+
+  def find_host(id_name)
+    id = int_param(id_name)
+    hosts = $db['hosts']
+    host = hosts.find { |h| h[:id] == id }
+    raise RequestError, 'Host does not exist.' if !host
+    host
   end
 end
 
@@ -36,21 +70,28 @@ get '/' do
   erb :index
 end
 
-get '/status' do
-  hosts = $db['hosts']
+get '/hosts/:id' do
+  handle_errors do
+    host = find_host(:id)
 
-  status = []
-  hosts.each do |host|
-    client = RubySupervisor::Client.new(host[:host], host[:port])
-    status << {
+    processes = []
+    begin
+      client = RubySupervisor::Client.new(host[:host], host[:port])
+      processes = client.processes
+    rescue
+      # TODO: Report some connection error.
+    end
+
+    status = {
+      id: host[:id],
       name: host[:name],
       host: host[:host],
       port: host[:port],
-      processes: client.processes
+      processes: processes
     }
-  end
 
-  json status
+    json status
+  end
 end
 
 get '/hosts' do
@@ -59,20 +100,16 @@ end
 
 post '/hosts' do
   handle_errors do
-    name, host, port = params[:name], params[:host], params[:port]
-
-    raise RequestError, 'Name required.' if !name || name.empty?
-    raise RequestError, 'Host required.' if !host || host.empty?
-    raise RequestError, 'Port required.' if !port || port.empty?
-    raise RequestError, 'Invalid port.' if !/\d+/.match(port)
-    port = port.to_i
+    name = required_param(:name)
+    host = required_param(:host)
+    port = int_param(:port)
 
     id = nil
     $db.edit 'hosts' do |hosts|
       if hosts.empty?
         id = 0
       else
-        id = hosts.map { |host| host[:id] }.max + 1
+        id = hosts.map { |h| h[:id] }.max + 1
       end
       hosts << { id: id, name: name, host: host, port: port }
     end
@@ -83,18 +120,14 @@ end
 
 patch '/hosts/:id' do
   handle_errors do
-    id = params[:id]
-    raise RequestError, 'Invalid ID.' if !/\d+/.match(id)
-    id = id.to_i
+    id = int_param(:id)
 
-    name, host, port = params[:name], params[:host], params[:port]
-
-    raise RequestError, 'Name required.' if !name || name.empty?
-    raise RequestError, 'Host required.' if !host || host.empty?
-    raise RequestError, 'Port required.' if !port || port.empty?
+    name = required_param(:name)
+    host = required_param(:host)
+    port = int_param(:port)
 
     $db.edit 'hosts' do |hosts|
-      target = hosts.find { |host| host[:id] == id }
+      target = hosts.find { |h| h[:id] == id }
 
       raise RequestError, 'Host does not exist.' if !target
 
@@ -103,39 +136,58 @@ patch '/hosts/:id' do
       target[:port] = port
     end
 
-    json {}
+    json true
   end
 end
 
 delete '/hosts/:id' do
   handle_errors do
-    id = params[:id]
-    raise RequestError, 'Invalid ID.' if !/\d+/.match(id)
-    id = id.to_i
+    id = int_param(:id)
 
     $db.edit 'hosts' do |hosts|
       before = hosts.length
-      hosts.reject! { |host| host[:id] == id }
+      hosts.reject! { |h| h[:id] == id }
 
       raise RequestError, 'Host does not exist.' if hosts.length == before
     end
 
-    json {}
+    json true
   end
 end
 
 get '/hosts/:id/processes' do
   handle_errors do
-    id = params[:id]
-    raise RequestError, 'Invalid ID.' if !/\d+/.match(id)
-    id = id.to_i
-
-    hosts = $db['hosts']
-    host = hosts.find { |h| h[:id] == id }
-    raise RequestError, 'Host does not exist.' if !host
-
+    host = find_host(:id)
     client = RubySupervisor::Client.new(host[:host], host[:port])
     
     json client.processes
+  end
+end
+
+post '/hosts/:id/processes/command' do
+  handle_errors do
+    host = find_host(:id)
+    group = required_param(:group)
+    name = required_param(:name)
+    command = required_param(:command)
+
+    # TODO: More param validation.
+    client = RubySupervisor::Client.new(host[:host], host[:port])
+    process = client.process("#{group}:#{name}")
+
+    raise RequestError, 'Process does not exist.' if !process
+
+    case command.downcase
+    when 'start'
+      process.start
+    when 'stop'
+      process.stop
+    when 'restart'
+      process.restart
+    else
+      raise RequestError, 'Invalid command.'
+    end
+
+    json true
   end
 end
