@@ -1,33 +1,51 @@
 <html>
 <head>
+  <link rel="stylesheet" type="text/css" href="/public/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="/public/app.css" />
   <script src="/public/angular.min.js"></script>
   <script src="/public/angular-filter.min.js"></script>
   <script src="/public/app.js"></script>
 </head>
 <body ng-app="superdash" ng-controller="DashboardCtrl">
-  <form ng-controller="CreateHostCtrl" ng-submit="submit()">
-    <input type="text" ng-model="name" placeholder="Name">
-    <input type="text" ng-model="host" placeholder="IP or hostname">
-    <input type="text" ng-model="port" placeholder="Port" value="9001">
-    <input type="submit" value="Add Host">
-  </form>
-  <a href="">Flat List</a> | <a href="">By Server</a> | <a href="">By Group</a>
-  <ul>
-    <li ng-repeat="(_, host) in hosts" ng-controller="HostCtrl">
-      {{host.name}} <a href="" ng-click="delete(host)">delete</a>
-      <ul>
-        <li ng-repeat="(group, processes) in host.processes | groupBy: 'group'">
-          {{group}}
-          <ul>
-            <li ng-repeat="process in processes" ng-controller="ProcessCtrl">
-              {{process.name}}
-              <a href="" ng-if="process.state == 0" ng-click="control(process, 'start')">start</a>
-              <a href="" ng-if="process.state == 20" ng-click="control(process, 'stop')">stop</a>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-  </ul>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <form ng-controller="CreateHostCtrl" ng-submit="submit()">
+          <input type="text" ng-model="name" placeholder="Name">
+          <input type="text" ng-model="host" placeholder="IP or hostname">
+          <input type="text" ng-model="port" placeholder="Port" value="9001">
+          <input type="submit" class="btn btn-default" value="Add Host">
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="host" ng-repeat="(_, host) in hosts" ng-controller="HostCtrl">
+          <div class="summary">
+            <h3>{{host.name}}</h3>
+            <span class="url">http://{{host.host}}:{{host.port}}</span>
+            <a href="" class="delete" ng-click="delete(host)">Remove host</a>
+          </div>
+          <div class="control">
+            <button ng-disabled="!host.connected" class="btn btn-default">Start All</button>
+            <button ng-disabled="!host.connected" class="btn btn-default">Stop All</button>
+            <button ng-disabled="!host.connected" class="btn btn-default">Restart All</button>
+          </div>
+          <div class="processes" ng-repeat="(group, processes) in host.processes | groupBy: 'group'">
+            <section class="process {{process.state | processState}}" ng-repeat="process in processes" ng-controller="ProcessCtrl">
+              <div class="row">
+                <div class="col-md-4"><span class="group">{{process.group}}</span> {{process.name}}</div>
+                <div class="col-md-4">{{process.state | processState}}</div>
+                <div class="col-md-4">
+                  <button class="btn btn-default pull-right" ng-click="control(process, 'start')" ng-if="process.state == states.stopped">Start</button>
+                  <button class="btn btn-default pull-right" ng-click="control(process, 'stop')" ng-if="process.state == states.running">Stop</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

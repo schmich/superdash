@@ -1,0 +1,44 @@
+body {
+  font-size: 16px;
+}
+.host {
+  margin-bottom: 40px;
+}
+.host .summary h3 {
+  display: inline-block;
+  margin-right: 20px;
+}
+.host .summary .url {
+  margin-right: 20px;
+}
+.host .summary .version {
+}
+.host .summary .delete {
+  display: none;
+}
+.host .summary:hover .delete {
+  display: inline;
+}
+.host .control {
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 10px 0 12px 0;
+  margin-bottom: 20px;
+}
+.host .process {
+  margin-bottom: 3px;
+  padding: 3px;
+  line-height: 36px;
+}
+.host .process .group {
+  color: #999;
+  text-transform: uppercase;
+  font-size: smaller;
+  margin: 0 10px;
+}
+.host .process.stopped {
+  background: #f0f0f0;
+}
+.host .process.running {
+  background: rgb(223, 240, 216);
+}

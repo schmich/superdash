@@ -22,6 +22,11 @@ $db = initialize_database(db_path)
 class RequestError < StandardError
 end
 
+# TODO: Cache connections.
+def connect(host)
+  RubySupervisor::Client.new(host[:host], host[:port], timeout: 3)
+end
+
 def handle_errors
   begin
     return yield
@@ -74,12 +79,15 @@ get '/hosts/:id' do
   handle_errors do
     host = find_host(:id)
 
+    error = nil
+    version = nil
     processes = []
     begin
-      client = RubySupervisor::Client.new(host[:host], host[:port])
+      client = connect(host)
+      version = client.version
       processes = client.processes
-    rescue
-      # TODO: Report some connection error.
+    rescue => e
+      error = e.to_s
     end
 
     status = {
@@ -87,8 +95,11 @@ get '/hosts/:id' do
       name: host[:name],
       host: host[:host],
       port: host[:port],
+      version: version,
       processes: processes
     }
+
+    status[:error] = error if error
 
     json status
   end
@@ -158,13 +169,30 @@ end
 get '/hosts/:id/processes' do
   handle_errors do
     host = find_host(:id)
-    client = RubySupervisor::Client.new(host[:host], host[:port])
+    client = connect(host)
     
+    # TODO: Handle case when we cannot connect.
     json client.processes
   end
 end
 
-post '/hosts/:id/processes/command' do
+get '/hosts/:id/process/log' do
+  handle_errors do
+    host = find_host(:id)
+    group = required_param(:group)
+    name = required_param(:name)
+
+    # TODO: More param validation.
+    client = connect(host)
+    process = client.process("#{group}:#{name}")
+
+    raise RequestError, 'Process does not exist.' if !process
+
+    json log: process.logs.read(0, 100)
+  end
+end
+
+post '/hosts/:id/process/command' do
   handle_errors do
     host = find_host(:id)
     group = required_param(:group)
@@ -172,7 +200,7 @@ post '/hosts/:id/processes/command' do
     command = required_param(:command)
 
     # TODO: More param validation.
-    client = RubySupervisor::Client.new(host[:host], host[:port])
+    client = connect(host)
     process = client.process("#{group}:#{name}")
 
     raise RequestError, 'Process does not exist.' if !process
@@ -188,6 +216,6 @@ post '/hosts/:id/processes/command' do
       raise RequestError, 'Invalid command.'
     end
 
-    json true
+    json client.processes
   end
 end

@@ -1,5 +1,16 @@
 var app = angular.module('superdash', ['angular.filter']);
 
+var states = {
+  stopped: 0,
+  starting: 10,
+  running: 20,
+  backoff: 30,
+  stopping: 40,
+  exited: 100,
+  fatal: 200,
+  unknown: 1000
+};
+
 app.controller('DashboardCtrl', function($scope, $http) {
   $scope.hosts = {};
 
@@ -9,13 +20,16 @@ app.controller('DashboardCtrl', function($scope, $http) {
         for (var i = 0; i < res.length; ++i) {
           var host = res[i];
           $scope.hosts[host.id] = host;
+          $scope.hosts[host.id].connected = false;
         }
 
         for (var id in $scope.hosts) {
-          var host = $scope.hosts[id];
-          $http.get('/hosts/' + host.id)
+          $http.get('/hosts/' + id)
             .success(function(res) {
-              $scope.hosts[res.id].processes = res.processes;
+              var host = $scope.hosts[res.id];
+              host.connected = (res.error == null);
+              host.processes = res.processes;
+              host.version = res.version;
             })
             .error(function(res) {
               // TODO
@@ -61,6 +75,8 @@ app.controller('HostCtrl', function($scope, $http) {
 });
 
 app.controller('ProcessCtrl', function($scope, $http) {
+  $scope.states = states;
+
   $scope.control = function(process, command) {
     var params = {
       group: process.group,
@@ -68,11 +84,41 @@ app.controller('ProcessCtrl', function($scope, $http) {
       command: command
     };
 
-    $http.post('/hosts/' + $scope.host.id + '/processes/command', params)
+    $http.post('/hosts/' + $scope.host.id + '/process/command', params)
       .success(function(res) {
+        $scope.host.processes = res;
       })
       .error(function(res) {
         // TODO
       });
+  };
+
+  $scope.log = function(process) {
+    var params = {
+      group: process.group,
+      name: process.name
+    };
+
+    $http.get('/hosts/' + $scope.host.id + '/process/log', { params: params })
+      .success(function(res) {
+        alert(res.log);
+      });
+  };
+});
+
+app.filter('processState', function() {
+  var names = {
+    0: 'Stopped',
+    10: 'Starting',
+    20: 'Running',
+    30: 'Backoff',
+    40: 'Stopping',
+    100: 'Exited',
+    200: 'Fatal',
+    1000: 'Unknown'
+  };
+
+  return function(input) {
+    return names[input] || 'Unknown';
   };
 });
