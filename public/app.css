@@ -26,8 +26,8 @@ body {
 }
 .host .process section {
   margin-bottom: 3px;
-  padding: 3px 5px 5px 0;
-  line-height: 36px;
+  padding: 3px 6px 6px 0;
+  line-height: 39px;
 }
 .host .process .group {
   color: #999;
@@ -39,10 +39,11 @@ body {
   background: #f0f0f0;
 }
 .host .process .running {
-  background: rgb(223, 240, 216);
+  background: #cff5c8;
 }
 .host .process .log-container {
   background: #fdfdfd;
+  margin-top: -3px;
 }
 .host .process .log {
   height: 200px;
@@ -50,6 +51,7 @@ body {
   white-space: pre;
   font-family: Consolas, Monaco, monospace;
   line-height: 150%;
+  font-size: smaller;
 }
 .alert-danger {
   color: #fff;

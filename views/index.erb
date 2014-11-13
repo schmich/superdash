@@ -13,7 +13,7 @@
         <form ng-controller="CreateHostCtrl" ng-submit="submit()">
           <input type="text" ng-model="name" placeholder="Name">
           <input type="text" ng-model="host" placeholder="IP or hostname">
-          <input type="text" ng-model="port" placeholder="Port" value="9001">
+          <input type="text" ng-model="port" placeholder="Port">
           <input type="submit" class="btn btn-default" value="Add Host">
         </form>
       </div>
@@ -41,7 +41,10 @@
                     <div class="pull-right">
                       <button class="btn btn-default" ng-click="control(process, 'start')" ng-if="process.state == states.stopped">Start</button>
                       <button class="btn btn-default" ng-click="control(process, 'stop')" ng-if="process.state == states.running">Stop</button>
-                      <button class="btn btn-default" ng-click="watchLog(process)">Show Log</button>
+                      <button class="btn btn-default" ng-click="watchLog(process)">
+                        <span ng-if="process.watchLog">Hide Log</span>
+                        <span ng-if="!process.watchLog">Show Log</span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -55,7 +58,7 @@
           </div>
           <div ng-if="host.error">
             <div class="alert alert-danger">
-              Could not connect to host.
+              Cannot connect to host.
             </div>
           </div>
         </div>

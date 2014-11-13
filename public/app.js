@@ -49,7 +49,7 @@ app.controller('DashboardCtrl', function($scope, $http) {
 app.controller('CreateHostCtrl', function($scope, $http) {
   $scope.name = null;
   $scope.host = null;
-  $scope.port = null;
+  $scope.port = 9001;
 
   $scope.submit = function() {
     $http.post('/hosts', { name: $scope.name, host: $scope.host, port: $scope.port })
@@ -64,15 +64,18 @@ app.controller('CreateHostCtrl', function($scope, $http) {
 
 app.controller('HostCtrl', function($scope, $http) {
   $scope.delete = function(host) {
-    $http.delete('/hosts/' + host.id)
-      .success(function(res) {
-        // TODO: Refresh from server?
-        // TODO: Confirm?
-        delete $scope.hosts[host.id];
-      })
-      .error(function(res) {
-        // TODO
-      });
+    var remove = confirm('Remove this host?');
+    if (remove) {
+      $http.delete('/hosts/' + host.id)
+        .success(function(res) {
+          // TODO: Refresh from server?
+          // TODO: Confirm?
+          delete $scope.hosts[host.id];
+        })
+        .error(function(res) {
+          // TODO
+        });
+    }
   };
 });
 
