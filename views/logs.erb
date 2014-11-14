@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="col-md12" ng-controller="LogsCtrl" autoscroll="process.log">
+    <div class="process">
+      <h3>{{process.group}} : {{process.name}}</h3>
+      <span class="host">{{host.name}}</span>
+    </div>
+    <div class="separator"></div>
+    <div class="log-details">
+      <section class="log-container">
+        <div class="row">
+          <div class="col-md-12 log" ng-bind-html="process.log"></div>
+        </div>
+      </section>
+    </div>
+    </div>
+  </div>
+</div>

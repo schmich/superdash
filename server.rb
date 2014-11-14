@@ -78,7 +78,15 @@ helpers do
 end
 
 get '/' do
-  erb :index
+  handle_errors do
+    erb :index
+  end
+end
+
+get '/hosts/:id/logs' do
+  handle_errors do
+    erb :logs
+  end
 end
 
 get '/hosts/:id' do
@@ -188,13 +196,16 @@ get '/hosts/:id/process/log' do
     group = str_param(:group)
     name = str_param(:name)
 
+    # TODO: Sanity checks.
+    length = int_param(:length)
+
     # TODO: More param validation.
     client = connect(host)
     process = client.process("#{group}:#{name}")
 
     raise RequestError, 'Process does not exist.' if !process
 
-    json log: process.logs.read(-1000, 0)
+    json log: process.logs.read(-length, 0)
   end
 end
 

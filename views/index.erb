@@ -1,100 +1,71 @@
-<html>
-<head>
-  <title>Superdash</title>
-  <link rel="stylesheet" type="text/css" href="/public/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="/public/app.css" />
-  <script src="/public/angular.min.js"></script>
-  <script src="/public/angular-filter.min.js"></script>
-  <script src="/public/app.js"></script>
-</head>
-<body ng-app="superdash" ng-controller="DashboardCtrl">
-  <div class="navbar navbar-default">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/">Superdash</a>
-    </div>
-    <div class="navbar-collapse collapse navbar-responsive-collapse">
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="/#add-host">Add Host</a></li>
-      </ul>
-    </div>
+<div class="row" ng-if="showHostForm">
+  <div class="col-md-12">
+    <a name="add-host"></a>
+    <h4>Add Host</h4>
+    <form ng-controller="AddHostCtrl" ng-submit="submit()" class="add-host" name="add-host">
+      <input type="text" ng-model="name" placeholder="Name" autofocus>
+      <input type="text" ng-model="host" placeholder="IP or hostname">
+      <input type="text" ng-model="port" placeholder="Port">
+      <input type="submit" class="btn btn-default" value="Add Host">
+      <a href="" ng-click="cancel()">Cancel</a>
+    </form>
   </div>
-  <div class="container">
-    <div class="row" ng-if="showHostForm">
-      <div class="col-md-12">
-        <a name="add-host"></a>
-        <h4>Add Host</h4>
-        <form ng-controller="AddHostCtrl" ng-submit="submit()" class="add-host" name="add-host">
-          <input type="text" ng-model="name" placeholder="Name" autofocus>
-          <input type="text" ng-model="host" placeholder="IP or hostname">
-          <input type="text" ng-model="port" placeholder="Port">
-          <input type="submit" class="btn btn-primary" value="Add Host">
-          <a href="" ng-click="cancel()">Cancel</a>
-        </form>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="host" ng-repeat="(_, host) in hosts | reverse" ng-controller="HostCtrl">
+      <div class="summary">
+        <h3>{{host.name}}</h3>
+        <span class="url">http://{{host.host}}:{{host.port}}</span>
+        <a href="" class="delete" ng-click="delete(host)">Remove host</a>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="host" ng-repeat="(_, host) in hosts | reverse" ng-controller="HostCtrl">
-          <div class="summary">
-            <h3>{{host.name}}</h3>
-            <span class="url">http://{{host.host}}:{{host.port}}</span>
-            <a href="" class="delete" ng-click="delete(host)">Remove host</a>
-          </div>
-          <div class="control">
-            <button ng-disabled="!host.connected" class="btn btn-default">Start All</button>
-            <button ng-disabled="!host.connected" class="btn btn-default">Stop All</button>
-            <button ng-disabled="!host.connected" class="btn btn-default">Restart All</button>
-          </div>
-          <div ng-if="host.connected" class="processes" ng-repeat="(group, processes) in host.processes | groupBy: 'group'">
-            <div class="process" ng-repeat="process in processes" ng-controller="ProcessCtrl">
-              <section class="{{process.state | processState}}">
-                <div class="row">
-                  <div class="col-md-7"><span class="group">{{process.group}}</span> {{process.name}}</div>
-                  <div class="col-md-2">{{process.state | processState}}</div>
-                  <div class="col-md-3">
-                    <div class="pull-right">
-                      <button ng-disabled="process.updating"
-                              ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
-                              ng-click="control(process, 'start')"
-                              ng-if="process.state == states.stopped">
-                        <span ng-if="process.updating">&nbsp;</span>
-                        <span ng-if="!process.updating">Start</span>
-                      </button>
-                      <button ng-disabled="process.updating"
-                              ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
-                              ng-click="control(process, 'stop')"
-                              ng-if="process.state == states.running">
-                        <span ng-if="process.updating">&nbsp;</span>
-                        <span ng-if="!process.updating">Stop</span>
-                      </button>
-                      <button class="btn btn-default" ng-click="watchLog(process)">
-                        <span ng-if="process.watchLog">Hide Log</span>
-                        <span ng-if="!process.watchLog">Show Log</span>
-                      </button>
-                    </div>
-                  </div>
+      <div class="control">
+        <button ng-disabled="!host.connected" class="btn btn-default">Start All</button>
+        <button ng-disabled="!host.connected" class="btn btn-default">Stop All</button>
+        <button ng-disabled="!host.connected" class="btn btn-default">Restart All</button>
+      </div>
+      <div ng-if="host.connected" class="processes" ng-repeat="(group, processes) in host.processes | groupBy: 'group'">
+        <div class="process" ng-repeat="process in processes" ng-controller="ProcessCtrl">
+          <section class="{{process.state | processState}}">
+            <div class="row">
+              <div class="col-md-7"><span class="group">{{process.group}}</span> {{process.name}}</div>
+              <div class="col-md-2">{{process.state | processState}}</div>
+              <div class="col-md-3">
+                <div class="pull-right">
+                  <button ng-disabled="process.updating"
+                          ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
+                          ng-click="control(process, 'start')"
+                          ng-if="process.state == states.stopped">
+                    <span ng-if="process.updating">&nbsp;</span>
+                    <span ng-if="!process.updating">Start</span>
+                  </button>
+                  <button ng-disabled="process.updating"
+                          ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
+                          ng-click="control(process, 'stop')"
+                          ng-if="process.state == states.running">
+                    <span ng-if="process.updating">&nbsp;</span>
+                    <span ng-if="!process.updating">Stop</span>
+                  </button>
+                  <button class="btn btn-default" ng-click="watchLog(process)">
+                    <span ng-if="process.watchLog">Hide Log</span>
+                    <span ng-if="!process.watchLog">Show Log</span>
+                  </button>
                 </div>
-              </section>
-              <section ng-if="process.watchLog" autoscroll="process.log" class="log-container">
-                <div class="row">
-                  <div class="col-md-12 log" ng-bind-html="process.log"></div>
-                </div>
-              </section>
+              </div>
             </div>
-          </div>
-          <div ng-if="host.error">
-            <div class="alert alert-danger">
-              Cannot connect to host.
+          </section>
+          <section ng-if="process.watchLog" autoscroll="process.log" class="log-container">
+            <div class="row">
+              <div class="col-md-12 log" ng-bind-html="process.log"></div>
             </div>
-          </div>
+          </section>
+        </div>
+      </div>
+      <div ng-if="host.error">
+        <div class="alert alert-danger">
+          Cannot connect to host.
         </div>
       </div>
     </div>
   </div>
-</body>
-</html>
+</div>
