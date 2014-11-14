@@ -39,8 +39,20 @@
                   <div class="col-md-2">{{process.state | processState}}</div>
                   <div class="col-md-3">
                     <div class="pull-right">
-                      <button class="btn btn-default" ng-click="control(process, 'start')" ng-if="process.state == states.stopped">Start</button>
-                      <button class="btn btn-default" ng-click="control(process, 'stop')" ng-if="process.state == states.running">Stop</button>
+                      <button ng-disabled="process.updating"
+                              ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
+                              ng-click="control(process, 'start')"
+                              ng-if="process.state == states.stopped">
+                        <span ng-if="process.updating">&nbsp;</span>
+                        <span ng-if="!process.updating">Start</span>
+                      </button>
+                      <button ng-disabled="process.updating"
+                              ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
+                              ng-click="control(process, 'stop')"
+                              ng-if="process.state == states.running">
+                        <span ng-if="process.updating">&nbsp;</span>
+                        <span ng-if="!process.updating">Stop</span>
+                      </button>
                       <button class="btn btn-default" ng-click="watchLog(process)">
                         <span ng-if="process.watchLog">Hide Log</span>
                         <span ng-if="!process.watchLog">Show Log</span>
@@ -49,9 +61,9 @@
                   </div>
                 </div>
               </section>
-              <section ng-if="process.watchLog" class="log-container">
+              <section ng-if="process.watchLog" autoscroll="process.log" class="log-container">
                 <div class="row">
-                  <div autoscroll="process.log" class="col-md-12 log" ng-bind-html="process.log"></div>
+                  <div class="col-md-12 log" ng-bind-html="process.log"></div>
                 </div>
               </section>
             </div>

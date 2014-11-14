@@ -1,13 +1,18 @@
 var app = angular.module('superdash', ['angular.filter']);
 
 // TODO
+// Handle ALREADY_STARTED/ALREADY_STOPPED issues with process control
 // Warning if log is empty (flush output)
+// Ability to expand/collapse server segments (preserve settings in localStorage)
 // Fullscreen log viewing
 // stdout/stderr tabs
 // Watch/unwatch issues
 // Better inline form to add host (after all existing hosts)
 // Header?
+// Allow scrolling in log output (suspend auto-scroll)
 // Implement stop all/start all
+// Move "Add host" to bottom of page
+// Clear form inputs after new host is created (form reset)
 // Pri 2: Group pivot
 
 // See http://misc.flogisoft.com/bash/tip_colors_and_formatting
@@ -187,12 +192,16 @@ app.controller('ProcessCtrl', function($scope, $http, $sce) {
       command: command
     };
 
+    process.updating = true;
     $http.post('/hosts/' + $scope.host.id + '/process/command', params)
       .success(function(res) {
+        process.updating = false;
         $scope.host.processes = res;
       })
       .error(function(res) {
+        process.updating = false;
         // TODO
+        alert(res.error);
       });
   };
 

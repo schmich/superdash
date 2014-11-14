@@ -44,14 +44,23 @@ body {
 .host .process .log-container {
   background: #fdfdfd;
   margin-top: -3px;
+  overflow: auto;
 }
 .host .process .log {
-  height: 200px;
-  overflow: auto;
+  height: 300px;
   white-space: pre;
   font-family: Consolas, Monaco, monospace;
   line-height: 150%;
   font-size: smaller;
+}
+.btn.updating {
+  background-image: url('/public/spinner.gif');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto;
+}
+.updating {
+  cursor: wait;
 }
 .alert-danger {
   color: #fff;
