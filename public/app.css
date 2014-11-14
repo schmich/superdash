@@ -49,7 +49,6 @@ body {
   background: #fbfbfb;
   margin-top: -3px;
   overflow: auto;
-
 }
 .host .process .log {
   height: 300px;
@@ -85,4 +84,10 @@ textarea:focus, input:focus {
 .alert-danger {
   color: #fff;
   background: #e77;
+}
+.full-logs {
+  color: #777;
+  font-size: smaller;
+  position: relative;
+  top: 4px;
 }

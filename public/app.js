@@ -256,6 +256,10 @@ app.filter('processState', function() {
   };
 });
 
+app.filter('urlEscape', function() {
+  return window.escape;
+});
+
 app.directive('autoscroll', function() {
   return {
     link: function(scope, elem, attrs) {

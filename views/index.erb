@@ -28,8 +28,11 @@
         <div class="process" ng-repeat="process in processes" ng-controller="ProcessCtrl">
           <section class="{{process.state | processState}}">
             <div class="row">
-              <div class="col-md-7"><span class="group">{{process.group}}</span> {{process.name}}</div>
-              <div class="col-md-2">{{process.state | processState}}</div>
+              <div class="col-md-6"><span class="group">{{process.group}}</span> {{process.name}}</div>
+              <div class="col-md-2">
+                <a href="/hosts/{{host.id}}/logs?group={{process.group | urlEscape}}&name={{process.name | urlEscape}}" class="full-logs">Full logs</a>
+              </div>
+              <div class="col-md-1">{{process.state | processState}}</div>
               <div class="col-md-3">
                 <div class="pull-right">
                   <button ng-disabled="process.updating"
