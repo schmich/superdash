@@ -1,5 +1,6 @@
 <html>
 <head>
+  <title>Superdash</title>
   <link rel="stylesheet" type="text/css" href="/public/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="/public/app.css" />
   <script src="/public/angular.min.js"></script>
@@ -7,20 +8,38 @@
   <script src="/public/app.js"></script>
 </head>
 <body ng-app="superdash" ng-controller="DashboardCtrl">
+  <div class="navbar navbar-default">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Superdash</a>
+    </div>
+    <div class="navbar-collapse collapse navbar-responsive-collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/#add-host">Add Host</a></li>
+      </ul>
+    </div>
+  </div>
   <div class="container">
-    <div class="row">
+    <div class="row" ng-if="showHostForm">
       <div class="col-md-12">
-        <form ng-controller="CreateHostCtrl" ng-submit="submit()">
-          <input type="text" ng-model="name" placeholder="Name">
+        <a name="add-host"></a>
+        <h4>Add Host</h4>
+        <form ng-controller="AddHostCtrl" ng-submit="submit()" class="add-host" name="add-host">
+          <input type="text" ng-model="name" placeholder="Name" autofocus>
           <input type="text" ng-model="host" placeholder="IP or hostname">
           <input type="text" ng-model="port" placeholder="Port">
-          <input type="submit" class="btn btn-default" value="Add Host">
+          <input type="submit" class="btn btn-primary" value="Add Host">
+          <a href="" ng-click="cancel()">Cancel</a>
         </form>
       </div>
     </div>
     <div class="row">
       <div class="col-md-12">
-        <div class="host" ng-repeat="(_, host) in hosts" ng-controller="HostCtrl">
+        <div class="host" ng-repeat="(_, host) in hosts | reverse" ng-controller="HostCtrl">
           <div class="summary">
             <h3>{{host.name}}</h3>
             <span class="url">http://{{host.host}}:{{host.port}}</span>

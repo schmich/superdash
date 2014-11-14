@@ -138,6 +138,10 @@ app.controller('DashboardCtrl', function($scope, $http) {
               // TODO
             });
         }
+
+        if (res.length == 0) {
+          window.location.hash = '#add-host';
+        }
       })
       .error(function(res) {
         // TODO
@@ -147,7 +151,7 @@ app.controller('DashboardCtrl', function($scope, $http) {
   $scope.update();
 });
 
-app.controller('CreateHostCtrl', function($scope, $http) {
+app.controller('AddHostCtrl', function($scope, $http) {
   $scope.name = null;
   $scope.host = null;
   $scope.port = 9001;
@@ -156,10 +160,22 @@ app.controller('CreateHostCtrl', function($scope, $http) {
     $http.post('/hosts', { name: $scope.name, host: $scope.host, port: $scope.port })
       .success(function(res) {
         $scope.update();
+        $scope.name = null;
+        $scope.host = null;
+        $scope.port = 9001;
+        $scope.showHostForm = false;
+        window.location.hash = '';
+        window.history.replaceState(null, null, '/');
       })
       .error(function(res) {
-        // TODO
+        alert(res.error);
       });
+  };
+
+  $scope.cancel = function() {
+    $scope.showHostForm = false; 
+    window.location.hash = '';
+    window.history.replaceState(null, null, '/');
   };
 });
 
@@ -175,6 +191,10 @@ app.controller('HostCtrl', function($scope, $http) {
         // TODO: Refresh from server?
         // TODO: Confirm?
         delete $scope.hosts[host.id];
+
+        if (Object.keys($scope.hosts).length == 0) {
+          window.location.hash = '#add-host';
+        }
       })
       .error(function(res) {
         // TODO
@@ -271,4 +291,22 @@ app.directive('autoscroll', function() {
       });
     }
   };
+});
+
+app.run(function($rootScope) {
+  $rootScope.showHostForm = (window.location.hash == '#add-host');
+
+  window.addEventListener('hashchange', function() {
+    $rootScope.$apply(function() {
+      $rootScope.showHostForm = (window.location.hash == '#add-host');
+    });
+  }, false);
+
+  $rootScope.$watch('showHostForm', function(showing) {
+    if (showing) {
+      setTimeout(function() {
+        document.forms['add-host'].elements[0].focus();
+      }, 0);
+    }
+  });
 });

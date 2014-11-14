@@ -59,6 +59,13 @@ body {
   background-position: center center;
   background-size: auto;
 }
+.add-host input[type="submit"]{
+  margin-left: 10px;
+  margin-right: 10px;
+}
+textarea:focus, input:focus {
+  outline: 0;
+}
 .updating {
   cursor: wait;
 }
