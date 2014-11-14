@@ -48,6 +48,8 @@ body {
 .host .process .log-container {
   background: #fbfbfb;
   margin-top: -3px;
+  overflow: auto;
+
 }
 .host .process .log {
   height: 300px;
