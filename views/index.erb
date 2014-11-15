@@ -21,7 +21,6 @@
           <li><i class="stopped">&nbsp;</i> {{(host.processes | where:{state: 0}).length}}</li>
           <li><i class="running">&nbsp;</i> {{(host.processes | where:{state: 20}).length}}</li>
         </ul>
-        <a href="" class="delete" ng-click="delete(host)">Remove host</a>
       </div>
       <div class="control">
         <button ng-disabled="!host.connected" class="btn btn-default">Start All</button>
