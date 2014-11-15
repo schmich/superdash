@@ -94,25 +94,39 @@ textarea:focus, input:focus {
   position: relative;
   top: 4px;
 }
-.stat {
+ul.stats {
+  list-style-type: none;
+  display: inline-block;
+}
+ul.stats li {
   margin-right: 15px;
   display: inline-block;
 }
-.status-stopped {
-  display: inline-block;
-  border-radius: 10px;
-  width: 10px;
-  height: 10px;
-  position: relative;
-  top: 10px;
-  background: #e5e5e5;
+ul.stats i {
+  margin-right: 3px;
 }
-.status-running {
+ul.stats i.stopped {
   display: inline-block;
   border-radius: 10px;
   width: 10px;
   height: 10px;
+  background: #e5e5e5;
+  vertical-align: middle;
   position: relative;
-  top: 10px;
+  top: -2px;
+}
+ul.stats i.running {
+  display: inline-block;
+  border-radius: 10px;
+  width: 10px;
+  height: 10px;
   background: #aff5a8;
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+}
+.navbar-nav > li > ul {
+  line-height: 23px;
+  padding: 20.5px 15px;
+  margin: 0;
 }

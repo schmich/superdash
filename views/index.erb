@@ -17,8 +17,10 @@
       <div class="summary">
         <h3>{{host.name}}</h3>
         <span class="url">http://{{host.host}}:{{host.port}}</span>
-        <div class="stat"><div class="status-stopped">&nbsp;</div> {{(host.processes | where:{state: 0}).length}}</div>
-        <div class="stat"><div class="status-running">&nbsp;</div> {{(host.processes | where:{state: 20}).length}}</div>
+        <ul class="stats">
+          <li><i class="stopped">&nbsp;</i> {{(host.processes | where:{state: 0}).length}}</li>
+          <li><i class="running">&nbsp;</i> {{(host.processes | where:{state: 20}).length}}</li>
+        </ul>
         <a href="" class="delete" ng-click="delete(host)">Remove host</a>
       </div>
       <div class="control">
