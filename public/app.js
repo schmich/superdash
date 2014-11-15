@@ -5,7 +5,8 @@ var app = angular.module('superdash', ['angular.filter']);
 // Warning if log is empty (flush output)
 // Ability to expand/collapse server segments (preserve settings in localStorage)
 // Fullscreen log viewing
-// stdout/stderr tabs
+// stdout/stderr tabs on log page (see theme)
+// Colored pips to show process summary (running, stopped, ...)
 // Watch/unwatch issues
 // Better inline form to add host (after all existing hosts)
 // Header?
@@ -13,6 +14,8 @@ var app = angular.module('superdash', ['angular.filter']);
 // Implement stop all/start all
 // Move "Add host" to bottom of page
 // Clear form inputs after new host is created (form reset)
+// favicon
+// Restore minified version of angular-filter
 // Pri 2: Group pivot
 
 var states = {
@@ -52,6 +55,7 @@ app.controller('DashboardCtrl', function($scope, $http) {
           $scope.hosts[host.id] = host;
           host.connected = false;
           host.error = null;
+          host.processes = {};
         }
 
         for (var id in $scope.hosts) {
