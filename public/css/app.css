@@ -64,7 +64,7 @@ body {
   line-height: 150%;
 }
 .btn.updating {
-  background-image: url('/public/spinner.gif');
+  background-image: url('/public/img/spinner.gif');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: auto;
@@ -101,7 +101,7 @@ ul.stats li {
   display: inline-block;
 }
 ul.stats i {
-  margin-right: 3px;
+  margin-right: 1px;
 }
 ul.stats i.stopped {
   display: inline-block;
@@ -143,4 +143,18 @@ ul.stats i.running {
   padding-left: 15px;
 }
 .navbar-header .process-name {
+}
+.remove * {
+  color: #a22 !important;
+  cursor: pointer;
+}
+.remove:hover * {
+  color: #f44 !important;
+  cursor: pointer;
+}
+.remove .glyphicon {
+  position: relative;
+  top: -2px;
+  margin-right: 7px;
+  font-size: larger;
 }

@@ -11,8 +11,8 @@
     <ul class="nav navbar-nav">
       <li>
         <ul class="stats">
-          <li><i class="stopped">&nbsp;</i> {{(hosts | map: 'processes' | flatten | where:{state:0}).length}}</li>
-          <li><i class="running">&nbsp;</i> {{(hosts | map: 'processes' | flatten | where:{state:20}).length}}</li>
+          <li title="Stopped processes"><i class="stopped">&nbsp;</i> {{(hosts | map: 'processes' | flatten | where:{state:0}).length}}</li>
+          <li title="Running processes"><i class="running">&nbsp;</i> {{(hosts | map: 'processes' | flatten | where:{state:20}).length}}</li>
         </ul>
       </li>
     </ul>
@@ -42,11 +42,11 @@
           <h3>{{host.name}}</h3>
           <span class="url">http://{{host.host}}:{{host.port}}</span>
           <ul class="stats">
-            <li><i class="stopped">&nbsp;</i> {{(host.processes | where:{state: 0}).length}}</li>
-            <li><i class="running">&nbsp;</i> {{(host.processes | where:{state: 20}).length}}</li>
+            <li title="Stopped processes"><i class="stopped">&nbsp;</i> {{(host.processes | where:{state: 0}).length}}</li>
+            <li title="Running processes"><i class="running">&nbsp;</i> {{(host.processes | where:{state: 20}).length}}</li>
           </ul>
         </div>
-        <div class="control">
+        <div ng-if="!host.error" class="control">
           <button ng-disabled="!host.connected" class="btn btn-default">Start All</button>
           <button ng-disabled="!host.connected" class="btn btn-default">Stop All</button>
           <button ng-disabled="!host.connected" class="btn btn-default">Restart All</button>
