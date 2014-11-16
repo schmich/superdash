@@ -51,8 +51,12 @@ body {
   line-height: 150%;
   font-size: smaller;
 }
+.log-details {
+  margin-bottom: 50px;
+  border-bottom: 1px solid #ddd;
+}
 .log-details .log-container {
-  background: #fafafa;
+  background: #fbfbfb;
 }
 .log-details .log {
   white-space: pre;
@@ -123,4 +127,20 @@ ul.stats i.running {
   line-height: 23px;
   padding: 20.5px 15px;
   margin: 0;
+}
+.navbar-header p {
+  font-size: 24px;
+  margin: 0;
+  line-height: 23px;
+  display: inline-block;
+  padding: 20.5px 0px;
+}
+.navbar-header .process-group {
+  color: #aaa;
+  font-size: 18px;
+  text-transform: uppercase;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+.navbar-header .process-name {
 }

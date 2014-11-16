@@ -9,33 +9,9 @@
   <script src="/public/angular-filter.js"></script>
   <script src="/public/app.js"></script>
   <script src="/public/ansi.js"></script>
+  <script src="/public/bootstrap.min.js"></script>
 </head>
 <body ng-app="superdash" ng-controller="DashboardCtrl">
-  <div class="navbar navbar-default">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/">Superdash</a>
-    </div>
-    <div class="navbar-collapse collapse navbar-responsive-collapse">
-      <ul class="nav navbar-nav">
-        <li>
-          <ul class="stats">
-            <li><i class="stopped">&nbsp;</i> {{(hosts | map: 'processes' | flatten | where:{state:0}).length}}</li>
-            <li><i class="running">&nbsp;</i> {{(hosts | map: 'processes' | flatten | where:{state:20}).length}}</li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="/#add-host">Add Host</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="container">
-    <%= yield %>
-  </div>
+  <%= yield %>
 </body>
 </html>

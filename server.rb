@@ -205,7 +205,10 @@ get '/hosts/:id/process/log' do
 
     raise RequestError, 'Process does not exist.' if !process
 
-    json log: process.logs.read(-length, 0)
+    stdout = process.logs.read(-length, 0, :stdout)
+    stderr = process.logs.read(-length, 0, :stderr)
+
+    json stdout: stdout, stderr: stderr
   end
 end
 

@@ -2,9 +2,8 @@ var app = angular.module('superdash', ['angular.filter']);
 
 // TODO
 // Handle ALREADY_STARTED/ALREADY_STOPPED issues with process control
-// Warning if log is empty (flush output)
+// Warning if stdout/stderr logs are empty (flush output)
 // Ability to expand/collapse server segments (preserve settings in localStorage)
-// Fullscreen log viewing
 // stdout/stderr tabs on log page (see theme)
 // Colored pips to show process summary (running, stopped, ...)
 // Watch/unwatch issues
@@ -16,6 +15,8 @@ var app = angular.module('superdash', ['angular.filter']);
 // Clear form inputs after new host is created (form reset)
 // favicon
 // Restore minified version of angular-filter
+// Notification/alert when stderr has content (e.g. errors)
+// Ability to clear individual logs 
 // Pri 2: Group pivot
 
 var states = {
@@ -158,6 +159,12 @@ app.controller('ProcessCtrl', function($scope, $http, $sce) {
       });
   };
 
+  // TODO: Refactor.
+  function formatLog(log) {
+    var formatted = colorize(escapeHtml(log.replace(/(^\s*)|(\s*$)/g, '')));
+    return $sce.trustAsHtml(formatted);
+  }
+
   function updateLog(process) {
     var params = {
       group: process.group,
@@ -167,8 +174,7 @@ app.controller('ProcessCtrl', function($scope, $http, $sce) {
 
     $http.get('/hosts/' + $scope.host.id + '/process/log', { params: params })
       .success(function(res) {
-        var log = colorize(escapeHtml(res.log.replace(/(^\s*)|(\s*$)/g, '')));
-        process.log = $sce.trustAsHtml(log);
+        process.stdout = formatLog(res.stdout);
       });
 
     if (process.watchLog) { 
@@ -185,7 +191,7 @@ app.controller('ProcessCtrl', function($scope, $http, $sce) {
   };
 });
 
-app.controller('LogsCtrl', function($scope, $http, $sce) {
+app.controller('LogDetailCtrl', function($scope, $http, $sce) {
   $scope.host = null;
   $scope.process = null;
 
@@ -226,6 +232,12 @@ app.controller('LogsCtrl', function($scope, $http, $sce) {
     }
   });
 
+  // TODO: Refactor.
+  function formatLog(log) {
+    var formatted = colorize(escapeHtml(log.replace(/(^\s*)|(\s*$)/g, '')));
+    return $sce.trustAsHtml(formatted);
+  }
+
   function updateLog() {
     var params = {
       group: $scope.process.group,
@@ -235,8 +247,8 @@ app.controller('LogsCtrl', function($scope, $http, $sce) {
 
     $http.get('/hosts/' + $scope.host.id + '/process/log', { params: params })
       .success(function(res) {
-        var log = colorize(escapeHtml(res.log.replace(/(^\s*)|(\s*$)/g, '')));
-        $scope.process.log = $sce.trustAsHtml(log);
+        $scope.process.stdout = formatLog(res.stdout);
+        $scope.process.stderr = formatLog(res.stderr);
       });
 
     setTimeout(updateLog, 1000);
