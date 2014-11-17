@@ -62,6 +62,7 @@ body {
   white-space: pre;
   font-family: Consolas, Monaco, monospace;
   line-height: 150%;
+  font-size: smaller;
 }
 .btn.updating {
   background-image: url('/public/img/spinner.gif');
