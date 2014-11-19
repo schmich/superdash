@@ -11,7 +11,22 @@ body {
 .host .summary .url, .process .host {
   margin-right: 20px;
 }
-.host .summary .version {
+.host .summary {
+  vertical-align: bottom;
+  display: flex;
+  align-items: flex-end;
+}
+.host .summary .info {
+  flex-grow: 1;
+}
+.host .remove {
+  -webkit-transition: opacity 0.4s;
+  transition: opacity 0.4s;
+  opacity: 0;
+  margin-bottom: 11.5px;
+}
+.host .summary:hover .remove {
+  opacity: 1;
 }
 .host .control {
   border-top: 1px solid #eee;
@@ -144,18 +159,4 @@ ul.stats i.running {
   padding-left: 15px;
 }
 .navbar-header .process-name {
-}
-.remove * {
-  color: #a22 !important;
-  cursor: pointer;
-}
-.remove:hover * {
-  color: #f44 !important;
-  cursor: pointer;
-}
-.remove .glyphicon {
-  position: relative;
-  top: -2px;
-  margin-right: 7px;
-  font-size: larger;
 }

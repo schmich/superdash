@@ -18,6 +18,7 @@ var app = angular.module('superdash', ['angular.filter']);
 // Notification/alert when stderr has content (e.g. errors)
 // Ability to clear individual logs 
 // Pri 2: Group pivot
+// TODO: Handle non-running, non-stopped states
 
 var states = {
   stopped: 0,
@@ -114,24 +115,28 @@ app.controller('AddHostCtrl', function($scope, $http) {
 });
 
 app.controller('HostCtrl', function($scope, $http) {
-  $scope.delete = function(host) {
+  $scope.remove = function(host) {
     var remove = confirm('Remove this host?');
     if (!remove) {
       return;
     }
 
+    // Optimistically remove the host.
+    var oldHost = $scope.hosts[host.id];
+    delete $scope.hosts[host.id];
+
     $http.delete('/hosts/' + host.id)
       .success(function(res) {
         // TODO: Refresh from server?
         // TODO: Confirm?
-        delete $scope.hosts[host.id];
 
         if (Object.keys($scope.hosts).length == 0) {
           window.location.hash = '#add-host';
         }
       })
       .error(function(res) {
-        // TODO
+        $scope.hosts[host.id] = oldHost;
+        alert(res.error);
       });
   };
 });

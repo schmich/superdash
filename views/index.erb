@@ -39,12 +39,15 @@
     <div class="col-md-12">
       <div class="host" ng-repeat="(_, host) in hosts | reverse" ng-controller="HostCtrl">
         <div class="summary">
-          <h3>{{host.name}}</h3>
-          <span class="url">http://{{host.host}}:{{host.port}}</span>
-          <ul class="stats">
-            <li title="Stopped processes"><i class="stopped">&nbsp;</i> {{(host.processes | where:{state: 0}).length}}</li>
-            <li title="Running processes"><i class="running">&nbsp;</i> {{(host.processes | where:{state: 20}).length}}</li>
-          </ul>
+          <div class="info">
+            <h3>{{host.name}}</h3>
+            <span class="url">http://{{host.host}}:{{host.port}}</span>
+            <ul class="stats">
+              <li title="Stopped processes"><i class="stopped">&nbsp;</i> {{(host.processes | where:{state: 0}).length}}</li>
+              <li title="Running processes"><i class="running">&nbsp;</i> {{(host.processes | where:{state: 20}).length}}</li>
+            </ul>
+          </div>
+          <a href="" ng-click="remove(host)" class="remove"><span class="glyphicon glyphicon-remove"></span> Remove</a>
         </div>
         <div ng-if="!host.error" class="control">
           <button ng-disabled="!host.connected" class="btn btn-default">Start All</button>

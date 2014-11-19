@@ -5,6 +5,7 @@ require 'ruby-supervisor'
 require 'fsdb'
 require 'json'
 require 'rack'
+require 'thread'
 
 db_path = ARGV[0] || 'db'
 if !db_path || db_path.empty?
@@ -17,15 +18,32 @@ def initialize_database(path)
   db
 end
 
-$db = initialize_database(db_path)
-
 class RequestError < StandardError
 end
 
-# TODO: Cache connections.
-def connect(host)
-  RubySupervisor::Client.new(host[:host], host[:port], timeout: 2)
+class ConnectionPool
+  def initialize
+    @clients = {}
+    @client_lock = Mutex.new
+  end
+
+  def connect(host)
+    client_id = "#{host[:host]}:#{host[:port]}"
+
+    client = nil
+    @client_lock.synchronize { client = @clients[client_id] }
+
+    if !client
+      client = RubySupervisor::Client.new(host[:host], host[:port], timeout: 5)
+      @client_lock.synchronize { @clients[client_id] = client }
+    end
+
+    client
+  end
 end
+
+$db = initialize_database(db_path)
+$pool = ConnectionPool.new
 
 def handle_errors
   begin
@@ -97,7 +115,7 @@ get '/hosts/:id' do
     version = nil
     processes = []
     begin
-      client = connect(host)
+      client = $pool.connect(host)
       version = client.version
       processes = client.processes
     rescue => e
@@ -183,7 +201,7 @@ end
 get '/hosts/:id/processes' do
   handle_errors do
     host = find_host(:id)
-    client = connect(host)
+    client = $pool.connect(host)
     
     # TODO: Handle case when we cannot connect.
     json client.processes
@@ -200,7 +218,7 @@ get '/hosts/:id/process/log' do
     length = int_param(:length)
 
     # TODO: More param validation.
-    client = connect(host)
+    client = $pool.connect(host)
     process = client.process("#{group}:#{name}")
 
     raise RequestError, 'Process does not exist.' if !process
@@ -220,7 +238,7 @@ post '/hosts/:id/process/command' do
     command = str_param(:command)
 
     # TODO: More param validation.
-    client = connect(host)
+    client = $pool.connect(host)
     process = client.process("#{group}:#{name}")
 
     raise RequestError, 'Process does not exist.' if !process
