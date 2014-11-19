@@ -68,7 +68,7 @@
                     <button ng-disabled="process.updating"
                             ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
                             ng-click="control(process, 'start')"
-                            ng-if="process.state == states.stopped">
+                            ng-if="process.state == states.stopped || process.state == states.fatal">
                       <span ng-if="process.updating">&nbsp;</span>
                       <span ng-if="!process.updating">Start</span>
                     </button>

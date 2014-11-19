@@ -18,7 +18,7 @@ var app = angular.module('superdash', ['angular.filter']);
 // Notification/alert when stderr has content (e.g. errors)
 // Ability to clear individual logs 
 // Pri 2: Group pivot
-// TODO: Handle non-running, non-stopped states
+// Handle non-running, non-stopped states (fatal state: show exit code?)
 
 var states = {
   stopped: 0,

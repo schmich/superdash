@@ -54,6 +54,9 @@ body {
 .host .process .running {
   background: #cff5c8;
 }
+.host .process .fatal {
+  background: #fcc;
+}
 .host .process .log-container {
   background: #fbfbfb;
   margin-top: -3px;
