@@ -54,7 +54,7 @@ body {
 .host .process .running {
   background: #cff5c8;
 }
-.host .process .transitioning {
+.host .process .starting, .host .process .backoff, .host .process .stopping {
   background: #f8f6c4;
 }
 .host .process .fatal {

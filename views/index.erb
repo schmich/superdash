@@ -13,13 +13,13 @@
         <ul class="stats">
           <li title="Stopped processes"><i class="stopped">&nbsp;</i> {{(hosts | map: 'processes' | flatten | pick: 'state == 0 || state == 100').length}}</li>
           <li title="Running processes"><i class="running">&nbsp;</i> {{(hosts | map: 'processes' | flatten | where: { state: 20 }).length}}</li>
-          <li title="Transitioning processes" ng-switch on="count = (hosts | map: 'processes' | flatten | pick: 'state == 10 || state == 30 || state == 40').length">
+          <li title="Transitioning processes" ng-switch on="allTransCount = (hosts | map: 'processes' | flatten | pick: 'state == 10 || state == 30 || state == 40').length">
             <span ng-switch-when="0"></span>
-            <span ng-switch-default><i class="transitioning">&nbsp;</i> {{count}}</span>
+            <span ng-switch-default><i class="transitioning">&nbsp;</i> {{allTransCount}}</span>
           </li>
-          <li title="Failed processes" ng-switch on="count = (host | map: 'processes' | flatten | where: { state: 200 }).length">
+          <li title="Failed processes" ng-switch on="allFailCount = (host | map: 'processes' | flatten | where: { state: 200 }).length">
             <span ng-switch-when="0"></span>
-            <span ng-switch-default><i class="fatal">&nbsp;</i> {{count}}</span>
+            <span ng-switch-default><i class="fatal">&nbsp;</i> {{allFailCount}}</span>
           </li>
         </ul>
       </li>
@@ -53,13 +53,13 @@
             <ul class="stats">
               <li title="Stopped processes"><i class="stopped">&nbsp;</i> {{(host.processes | pick: 'state == 0 || state == 100').length}}</li>
               <li title="Running processes"><i class="running">&nbsp;</i> {{(host.processes | where: { state: 20 }).length}}</li>
-              <li title="Transitioning processes" ng-switch on="count = (host.processes | pick: 'state == 10 || state == 30 || state == 40').length">
+              <li title="Transitioning processes" ng-switch on="transCount = (host.processes | pick: 'state == 10 || state == 30 || state == 40').length">
                 <span ng-switch-when="0"></span>
-                <span ng-switch-default><i class="transitioning">&nbsp;</i> {{count}}</span>
+                <span ng-switch-default><i class="transitioning">&nbsp;</i> {{transCount}}</span>
               </li>
-              <li title="Failed processes" ng-switch on="count = (host.processes | where: { state: 200 }).length">
+              <li title="Failed processes" ng-switch on="failCount = (host.processes | where: { state: 200 }).length">
                 <span ng-switch-when="0"></span>
-                <span ng-switch-default><i class="fatal">&nbsp;</i> {{count}}</span>
+                <span ng-switch-default><i class="fatal">&nbsp;</i> {{failCount}}</span>
               </li>
             </ul>
           </div>
