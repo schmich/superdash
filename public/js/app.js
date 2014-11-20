@@ -3,7 +3,6 @@ var app = angular.module('superdash', ['angular.filter']);
 // TODO
 // Handle ALREADY_STARTED/ALREADY_STOPPED issues with process control
 // Warning if stdout/stderr logs are empty (flush output)
-// Ability to expand/collapse server segments (preserve settings in localStorage)
 // stdout/stderr tabs on log page (see theme)
 // Colored pips to show process summary (running, stopped, ...)
 // Watch/unwatch issues
@@ -19,6 +18,7 @@ var app = angular.module('superdash', ['angular.filter']);
 // Ability to clear individual logs 
 // Pri 2: Group pivot
 // Handle non-running, non-stopped states (fatal state: show exit code?)
+// Preserve host expand/collapse state in localStorage
 
 var states = {
   stopped: 0,
@@ -48,6 +48,11 @@ function escapeHtml(string) {
 
 app.controller('DashboardCtrl', function($scope, $http) {
   $scope.hosts = {};
+  $scope.expanded = {};
+
+  $scope.toggleExpansion = function(host) {
+    $scope.expanded[host.id] = !$scope.expanded[host.id];
+  };
 
   $scope.update = function() {
     $http.get('/hosts')
@@ -58,6 +63,8 @@ app.controller('DashboardCtrl', function($scope, $http) {
           host.connected = false;
           host.error = null;
           host.processes = {};
+
+          $scope.expanded[host.id] = true;
         }
 
         for (var id in $scope.hosts) {

@@ -1,9 +1,6 @@
 body {
   font-size: 16px;
 }
-.host {
-  margin-bottom: 40px;
-}
 .host .summary h3, .process h3 {
   display: inline-block;
   margin-right: 20px;
@@ -23,9 +20,24 @@ body {
   -webkit-transition: opacity 0.4s;
   transition: opacity 0.4s;
   opacity: 0;
-  margin-bottom: 11.5px;
+  padding: 15.5px 5px;
 }
-.host .summary:hover .remove {
+.host .expando {
+  -webkit-transition: opacity 0.4s;
+  transition: opacity 0.4s;
+  opacity: 0;
+  padding: 15.5px 5px;
+  margin-right: 5px;
+}
+.host .details.expanded {
+  display: block;
+  margin-bottom: 40px;
+}
+.host .details.collapsed {
+  display: none;
+  margin-bottom: 0px;
+}
+.host .summary:hover .remove, .host .summary:hover .expando {
   opacity: 1;
 }
 .host .control {
