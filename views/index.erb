@@ -11,8 +11,16 @@
     <ul class="nav navbar-nav">
       <li>
         <ul class="stats">
-          <li title="Stopped processes"><i class="stopped">&nbsp;</i> {{(hosts | map: 'processes' | flatten | where:{state:0}).length}}</li>
-          <li title="Running processes"><i class="running">&nbsp;</i> {{(hosts | map: 'processes' | flatten | where:{state:20}).length}}</li>
+          <li title="Stopped processes"><i class="stopped">&nbsp;</i> {{(hosts | map: 'processes' | flatten | pick: 'state == 0 || state == 100').length}}</li>
+          <li title="Running processes"><i class="running">&nbsp;</i> {{(hosts | map: 'processes' | flatten | where: { state: 20 }).length}}</li>
+          <li title="Transitioning processes" ng-switch on="count = (hosts | map: 'processes' | flatten | pick: 'state == 10 || state == 30 || state == 40').length">
+            <span ng-switch-when="0"></span>
+            <span ng-switch-default><i class="transitioning">&nbsp;</i> {{count}}</span>
+          </li>
+          <li title="Failed processes" ng-switch on="count = (host | map: 'processes' | flatten | where: { state: 200 }).length">
+            <span ng-switch-when="0"></span>
+            <span ng-switch-default><i class="fatal">&nbsp;</i> {{count}}</span>
+          </li>
         </ul>
       </li>
     </ul>
@@ -43,8 +51,16 @@
             <h3>{{host.name}}</h3>
             <span class="url">http://{{host.host}}:{{host.port}}</span>
             <ul class="stats">
-              <li title="Stopped processes"><i class="stopped">&nbsp;</i> {{(host.processes | where:{state: 0}).length}}</li>
-              <li title="Running processes"><i class="running">&nbsp;</i> {{(host.processes | where:{state: 20}).length}}</li>
+              <li title="Stopped processes"><i class="stopped">&nbsp;</i> {{(host.processes | pick: 'state == 0 || state == 100').length}}</li>
+              <li title="Running processes"><i class="running">&nbsp;</i> {{(host.processes | where: { state: 20 }).length}}</li>
+              <li title="Transitioning processes" ng-switch on="count = (host.processes | pick: 'state == 10 || state == 30 || state == 40').length">
+                <span ng-switch-when="0"></span>
+                <span ng-switch-default><i class="transitioning">&nbsp;</i> {{count}}</span>
+              </li>
+              <li title="Failed processes" ng-switch on="count = (host.processes | where: { state: 200 }).length">
+                <span ng-switch-when="0"></span>
+                <span ng-switch-default><i class="fatal">&nbsp;</i> {{count}}</span>
+              </li>
             </ul>
           </div>
           <a href="" ng-click="remove(host)" class="remove"><span class="glyphicon glyphicon-remove"></span> Remove</a>
@@ -60,7 +76,7 @@
               <div class="row">
                 <div class="col-md-6"><span class="group">{{process.group}}</span> {{process.name}}</div>
                 <div class="col-md-2">
-                  <a href="/hosts/{{host.id}}/logs?group={{process.group | urlEscape}}&name={{process.name | urlEscape}}" class="full-logs">View logs</a>
+                  <a href="/hosts/{{host.id}}/logs?group={{process.group | urlEscape}}&name={{process.name | urlEscape}}" class="full-logs">Full logs</a>
                 </div>
                 <div class="col-md-1">{{process.state | processState}}</div>
                 <div class="col-md-3">
@@ -68,7 +84,7 @@
                     <button ng-disabled="process.updating"
                             ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
                             ng-click="control(process, 'start')"
-                            ng-if="process.state == states.stopped || process.state == states.fatal">
+                            ng-if="process.state == states.stopped || process.state == states.fatal || process.state == states.exited">
                       <span ng-if="process.updating">&nbsp;</span>
                       <span ng-if="!process.updating">Start</span>
                     </button>
@@ -80,8 +96,8 @@
                       <span ng-if="!process.updating">Stop</span>
                     </button>
                     <button class="btn btn-default" ng-click="watchLog(process)">
-                      <span ng-if="process.watchLog">Hide Log</span>
-                      <span ng-if="!process.watchLog">Short Log</span>
+                      <span ng-if="process.watchLog">Hide</span>
+                      <span ng-if="!process.watchLog">stdout</span>
                     </button>
                   </div>
                 </div>

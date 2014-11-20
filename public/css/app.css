@@ -48,11 +48,14 @@ body {
   font-size: smaller;
   margin: 0 10px;
 }
-.host .process .stopped {
+.host .process .stopped, .host .process .exited {
   background: #f0f0f0;
 }
 .host .process .running {
   background: #cff5c8;
+}
+.host .process .transitioning {
+  background: #f8f6c4;
 }
 .host .process .fatal {
   background: #fcc;
@@ -121,26 +124,25 @@ ul.stats li {
 }
 ul.stats i {
   margin-right: 1px;
+  display: inline-block;
+  border-radius: 10px;
+  width: 10px;
+  height: 10px;
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
 }
 ul.stats i.stopped {
-  display: inline-block;
-  border-radius: 10px;
-  width: 10px;
-  height: 10px;
   background: #e5e5e5;
-  vertical-align: middle;
-  position: relative;
-  top: -2px;
 }
 ul.stats i.running {
-  display: inline-block;
-  border-radius: 10px;
-  width: 10px;
-  height: 10px;
   background: #aff5a8;
-  vertical-align: middle;
-  position: relative;
-  top: -2px;
+}
+ul.stats i.transitioning {
+  background: #f4ef81;
+}
+ul.stats i.fatal {
+  background: #fcc;
 }
 .navbar-nav > li > ul {
   line-height: 23px;
