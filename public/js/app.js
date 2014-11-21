@@ -19,6 +19,7 @@ var app = angular.module('superdash', ['angular.filter']);
 // Pri 2: Group pivot
 // Handle non-running, non-stopped states (fatal state: show exit code?)
 // Preserve host expand/collapse state in localStorage
+// Process row: highlight "out"/"err" when that log preview is active
 
 var states = {
   stopped: 0,

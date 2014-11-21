@@ -45,81 +45,87 @@
   </div>
   <div class="row">
     <div class="col-md-12">
-      <div class="host" ng-repeat="(_, host) in hosts | reverse" ng-controller="HostCtrl">
-        <div class="summary">
-          <div class="info">
-            <h3>{{host.name}}</h3>
-            <span class="url">http://{{host.host}}:{{host.port}}</span>
-            <ul class="stats">
-              <li title="Stopped processes"><i class="stopped">&nbsp;</i> {{(host.processes | pick: 'state == 0 || state == 100').length}}</li>
-              <li title="Running processes"><i class="running">&nbsp;</i> {{(host.processes | where: { state: 20 }).length}}</li>
-              <li title="Transitioning processes" ng-switch on="transCount = (host.processes | pick: 'state == 10 || state == 30 || state == 40').length">
-                <span ng-switch-when="0"></span>
-                <span ng-switch-default><i class="transitioning">&nbsp;</i> {{transCount}}</span>
-              </li>
-              <li title="Failed processes" ng-switch on="failCount = (host.processes | where: { state: 200 }).length">
-                <span ng-switch-when="0"></span>
-                <span ng-switch-default><i class="fatal">&nbsp;</i> {{failCount}}</span>
-              </li>
-            </ul>
+      <div class="hosts">
+        <div class="host" ng-repeat="(_, host) in hosts | reverse" ng-controller="HostCtrl">
+          <div class="summary">
+            <div class="info">
+              <h3>{{host.name}}</h3>
+              <span class="url">http://{{host.host}}:{{host.port}}</span>
+              <ul class="stats">
+                <li title="Stopped processes"><i class="stopped">&nbsp;</i> {{(host.processes | pick: 'state == 0 || state == 100').length}}</li>
+                <li title="Running processes"><i class="running">&nbsp;</i> {{(host.processes | where: { state: 20 }).length}}</li>
+                <li title="Transitioning processes" ng-switch on="transCount = (host.processes | pick: 'state == 10 || state == 30 || state == 40').length">
+                  <span ng-switch-when="0"></span>
+                  <span ng-switch-default><i class="transitioning">&nbsp;</i> {{transCount}}</span>
+                </li>
+                <li title="Failed processes" ng-switch on="failCount = (host.processes | where: { state: 200 }).length">
+                  <span ng-switch-when="0"></span>
+                  <span ng-switch-default><i class="fatal">&nbsp;</i> {{failCount}}</span>
+                </li>
+              </ul>
+            </div>
+            <a href="" ng-click="toggleExpansion(host)" class="expando">
+              <i ng-if="expanded[host.id]" title="Hide details" class="fa fa-chevron-up"></i>
+              <i ng-if="!expanded[host.id]" title="Show details" class="fa fa-chevron-down"></i>
+            </a>
+            <a href="" ng-click="remove(host)" class="remove">
+              <i title="Remove host" class="fa fa-remove"></i>
+            </a>
           </div>
-          <a href="" ng-click="toggleExpansion(host)" class="expando">
-            <span ng-if="expanded[host.id]" title="Hide details" class="glyphicon glyphicon-chevron-up"></span>
-            <span ng-if="!expanded[host.id]" title="Show details" class="glyphicon glyphicon-chevron-down"></span>
-          </a>
-          <a href="" ng-click="remove(host)" class="remove">
-            <span title="Remove host" class="glyphicon glyphicon-remove"></span>
-          </a>
-        </div>
-        <div ng-class="{ details: true, expanded: expanded[host.id], collapsed: !expanded[host.id] }">
-          <div ng-if="!host.error" class="control">
-            <button ng-disabled="!host.connected" class="btn btn-default">Start All</button>
-            <button ng-disabled="!host.connected" class="btn btn-default">Stop All</button>
-            <button ng-disabled="!host.connected" class="btn btn-default">Restart All</button>
-          </div>
-          <div ng-if="host.connected" class="processes" ng-repeat="(group, processes) in host.processes | groupBy: 'group'">
-            <div class="process" ng-repeat="process in processes" ng-controller="ProcessCtrl">
-              <section class="{{process.state | processState}}">
-                <div class="row">
-                  <div class="col-md-6"><span class="group">{{process.group}}</span> {{process.name}}</div>
-                  <div class="col-md-2">
-                    <a href="/hosts/{{host.id}}/logs?group={{process.group | urlEscape}}&name={{process.name | urlEscape}}" class="full-logs">Full logs</a>
-                  </div>
-                  <div class="col-md-1">{{process.state | processState}}</div>
-                  <div class="col-md-3">
-                    <div class="pull-right">
-                      <button ng-disabled="process.updating"
-                              ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
-                              ng-click="control(process, 'start')"
-                              ng-if="process.state == states.stopped || process.state == states.fatal || process.state == states.exited">
-                        <span ng-if="process.updating">&nbsp;</span>
-                        <span ng-if="!process.updating">Start</span>
-                      </button>
-                      <button ng-disabled="process.updating"
-                              ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
-                              ng-click="control(process, 'stop')"
-                              ng-if="process.state == states.running">
-                        <span ng-if="process.updating">&nbsp;</span>
-                        <span ng-if="!process.updating">Stop</span>
-                      </button>
-                      <button class="btn btn-default" ng-click="watchLog(process)">
-                        <span ng-if="process.watchLog">Hide</span>
-                        <span ng-if="!process.watchLog">stdout</span>
-                      </button>
+          <div ng-class="{ details: true, expanded: expanded[host.id], collapsed: !expanded[host.id] }">
+            <div ng-if="!host.error" class="control">
+              <button ng-disabled="!host.connected" class="btn btn-default">Start All</button>
+              <button ng-disabled="!host.connected" class="btn btn-default">Stop All</button>
+              <button ng-disabled="!host.connected" class="btn btn-default">Restart All</button>
+            </div>
+            <div ng-if="host.connected" class="processes" ng-repeat="(group, processes) in host.processes | groupBy: 'group'">
+              <div class="process" ng-repeat="process in processes" ng-controller="ProcessCtrl">
+                <section class="{{process.state | processState}}">
+                  <div class="row">
+                    <div class="col-md-7">
+                      <a href="/hosts/{{host.id}}/logs?group={{process.group | urlEscape}}&name={{process.name | urlEscape}}" target="_blank"><i class="inspect fa fa-external-link"></i></a>
+                      <span class="group">{{process.group}}</span> {{process.name}}
+                    </div>
+                    <div class="col-md-1">{{process.state | processState}}</div>
+                    <div class="col-md-2">
+                      <div class="pull-right">
+                        <span class="logs">
+                          <span ng-click="watchLog(process)" title="View stdout log">out</span> &bull;
+                          <span title="View stderr log">err</span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="pull-right">
+                        <button ng-disabled="process.updating"
+                                ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
+                                ng-click="control(process, 'start')"
+                                ng-if="process.state == states.stopped || process.state == states.fatal || process.state == states.exited">
+                          <span ng-if="process.updating">&nbsp;</span>
+                          <span ng-if="!process.updating">Start</span>
+                        </button>
+                        <button ng-disabled="process.updating"
+                                ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
+                                ng-click="control(process, 'stop')"
+                                ng-if="process.state == states.running">
+                          <span ng-if="process.updating">&nbsp;</span>
+                          <span ng-if="!process.updating">Stop</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </section>
-              <section ng-if="process.watchLog" autoscroll="process.stdout" class="log-container">
-                <div class="row">
-                  <div class="col-md-12 log" ng-bind-html="process.stdout"></div>
-                </div>
-              </section>
+                </section>
+                <section ng-if="process.watchLog" autoscroll="process.stdout" class="log-container">
+                  <div class="row">
+                    <div class="col-md-12 log" ng-bind-html="process.stdout"></div>
+                  </div>
+                </section>
+              </div>
             </div>
-          </div>
-          <div ng-if="host.error">
-            <div class="alert alert-danger">
-              Cannot connect to host.
+            <div ng-if="host.error">
+              <div class="alert alert-danger">
+                Cannot connect to host.
+              </div>
             </div>
           </div>
         </div>

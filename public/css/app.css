@@ -1,6 +1,9 @@
 body {
   font-size: 16px;
 }
+.hosts {
+  margin-bottom: 40px;
+}
 .host .summary h3, .process h3 {
   display: inline-block;
   margin-right: 20px;
@@ -51,14 +54,33 @@ body {
 }
 .host .process section {
   margin-bottom: 3px;
-  padding: 3px 6px 6px 0;
+  padding: 5px 6px 3px 0;
   line-height: 39px;
+}
+.host .process .inspect {
+  font-size: smaller;
+  margin: 0 0 0 15px;
+  color: #aaa;
+}
+.host .process:hover .inspect {
+  color: #444;
 }
 .host .process .group {
   color: #999;
   text-transform: uppercase;
   font-size: smaller;
   margin: 0 10px;
+}
+.host .process .logs {
+  color: #777;
+  text-transform: uppercase;
+  font-size: smaller;
+}
+.host .process .logs span {
+  cursor: pointer;
+}
+.host .process .logs span:hover {
+  color: #222;
 }
 .host .process .stopped, .host .process .exited {
   background: #f0f0f0;
@@ -119,12 +141,6 @@ textarea:focus, input:focus {
 .alert-danger {
   color: #777;
   background: #fcc;
-}
-.full-logs {
-  color: #777;
-  font-size: smaller;
-  position: relative;
-  top: 4px;
 }
 ul.stats {
   list-style-type: none;
