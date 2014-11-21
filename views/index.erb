@@ -17,7 +17,7 @@
             <span ng-switch-when="0"></span>
             <span ng-switch-default><i class="transitioning">&nbsp;</i> {{allTransCount}}</span>
           </li>
-          <li title="Failed processes" ng-switch on="allFailCount = (host | map: 'processes' | flatten | where: { state: 200 }).length">
+          <li title="Failed processes" ng-switch on="allFailCount = (hosts | map: 'processes' | flatten | where: { state: 200 }).length">
             <span ng-switch-when="0"></span>
             <span ng-switch-default><i class="fatal">&nbsp;</i> {{allFailCount}}</span>
           </li>
