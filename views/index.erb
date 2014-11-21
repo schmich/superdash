@@ -90,34 +90,34 @@
                     <div class="col-md-2">
                       <div class="pull-right">
                         <span class="logs">
-                          <span ng-click="watchLog(process)" title="View stdout log">out</span> &bull;
+                          <span ng-click="toggleLog(process)" title="View stdout log">out</span> &bull;
                           <span title="View stderr log">err</span>
                         </span>
                       </div>
                     </div>
                     <div class="col-md-2">
                       <div class="pull-right">
-                        <button ng-disabled="process.updating"
-                                ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
+                        <button ng-disabled="updating[process]"
+                                ng-class="{ btn: true, 'btn-default': true, updating: updating[process] }"
                                 ng-click="control(process, 'start')"
                                 ng-if="process.state == states.stopped || process.state == states.fatal || process.state == states.exited">
-                          <span ng-if="process.updating">&nbsp;</span>
-                          <span ng-if="!process.updating">Start</span>
+                          <span ng-if="updating[process]">&nbsp;</span>
+                          <span ng-if="!updating[process]">Start</span>
                         </button>
-                        <button ng-disabled="process.updating"
-                                ng-class="{ btn: true, 'btn-default': true, updating: process.updating }"
+                        <button ng-disabled="updating[process]"
+                                ng-class="{ btn: true, 'btn-default': true, updating: updating[process] }"
                                 ng-click="control(process, 'stop')"
                                 ng-if="process.state == states.running">
-                          <span ng-if="process.updating">&nbsp;</span>
-                          <span ng-if="!process.updating">Stop</span>
+                          <span ng-if="updating[process]">&nbsp;</span>
+                          <span ng-if="!updating[process]">Stop</span>
                         </button>
                       </div>
                     </div>
                   </div>
                 </section>
-                <section ng-if="process.watchLog" autoscroll="process.stdout" class="log-container">
+                <section ng-if="logEnabled[process]" autoscroll="log[process]" class="log-container">
                   <div class="row">
-                    <div class="col-md-12 log" ng-bind-html="process.stdout"></div>
+                    <div class="col-md-12 log" ng-bind-html="log[process]"></div>
                   </div>
                 </section>
               </div>

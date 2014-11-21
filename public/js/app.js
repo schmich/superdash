@@ -20,6 +20,7 @@ var app = angular.module('superdash', ['angular.filter']);
 // Handle non-running, non-stopped states (fatal state: show exit code?)
 // Preserve host expand/collapse state in localStorage
 // Process row: highlight "out"/"err" when that log preview is active
+// Process summary: Add uptime, "now"/"start"/last changed stats, exit status?
 
 var states = {
   stopped: 0,
@@ -151,6 +152,9 @@ app.controller('HostCtrl', function($scope, $http) {
 
 app.controller('ProcessCtrl', function($scope, $http, $sce) {
   $scope.states = states;
+  $scope.updating = {};
+  $scope.logEnabled = {};
+  $scope.log = {};
 
   $scope.control = function(process, command) {
     var params = {
@@ -159,14 +163,18 @@ app.controller('ProcessCtrl', function($scope, $http, $sce) {
       command: command
     };
 
-    process.updating = true;
+    $scope.updating[process] = true;
     $http.post('/hosts/' + $scope.host.id + '/process/command', params)
       .success(function(res) {
-        process.updating = false;
-        $scope.host.processes = res;
+        $scope.updating[process] = false;
+
+        var updatedProcess = res;
+        for (var key in updatedProcess) {
+          process[key] = updatedProcess[key];
+        }
       })
       .error(function(res) {
-        process.updating = false;
+        $scope.updating[process] = false;
         // TODO
         alert(res.error);
       });
@@ -187,18 +195,18 @@ app.controller('ProcessCtrl', function($scope, $http, $sce) {
 
     $http.get('/hosts/' + $scope.host.id + '/process/log', { params: params })
       .success(function(res) {
-        process.stdout = formatLog(res.stdout);
+        $scope.log[process] = formatLog(res.stdout);
       });
 
-    if (process.watchLog) { 
+    if ($scope.logEnabled[process]) { 
       setTimeout(function() { updateLog(process); }, 1000);
     }
   }
 
-  $scope.watchLog = function(process) {
-    process.watchLog = !process.watchLog;
+  $scope.toggleLog = function(process) {
+    $scope.logEnabled[process] = !$scope.logEnabled[process];
 
-    if (process.watchLog) {
+    if ($scope.logEnabled[process]) {
       updateLog(process);
     }
   };

@@ -254,6 +254,10 @@ post '/hosts/:id/process/command' do
       raise RequestError, 'Invalid command.'
     end
 
-    json client.processes
+    process = client.processes.select do |p|
+      (p['group'] == group) && (p['name'] == name)
+    end.first
+
+    json process
   end
 end
